@@ -1,0 +1,55 @@
+edition: 1.0.0
+name: readbot-ai
+access: "default"
+
+vars:
+  region: "cn-shanghai"
+  service:
+    name: "readbot-ai"
+    description: 'ai service of readbot'
+  vpcConfig:
+      vpcId: vpc-uf69o8x2c9dpe9ni9zhd6
+      securityGroupId: sg-uf6dklm6ropymextgbrp
+      vswitchIds:
+        - vsw-uf6mjuikdtht9k3xq7rop
+
+services:
+  readbot-ai:
+    component: fc
+    actions: 
+      pre-deploy: 
+        - run: rm -rf deploy
+          path: .
+        - run: mkdir deploy
+          path: .
+        - run: cp -r src/* deploy 
+          path: .
+    props: # 组件的属性值
+      region: ${vars.region} # 关于变量的使用方法，可以参考：https://www.serverless-devs.com/serverless-devs/yaml#变量赋值
+      service: ${vars.service}
+      function:
+        name: "readbot-ai"
+        description: 'ai service of readbot'
+        codeUri: './deploy'
+        runtime: custom
+        caPort: 8000
+        timeout: 60
+        layers:
+          - acs:fc:cn-shanghai:official:layers/Python310/versions/2
+        environmentVariables:
+          PATH: /opt/python3.10/bin:$PATH
+          PYTHONUSERBASE: /code/python
+        customRuntimeConfig:
+          command:
+            - python
+          args:
+            - -u
+            - main.py
+      triggers:
+        - name: httpTrigger
+          type: http
+          config:
+            authType: anonymous
+            methods:
+              - GET
+              - POST

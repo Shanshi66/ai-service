@@ -1,8 +1,8 @@
 from fastapi import APIRouter
-from ..models.request import ServiceRequest, TaskType
-from ..models.response import ServiceResponse
-from ..base.exception import CustomException
-from ..ai.summary import LangChainSummaryService
+from models.request import ServiceRequest, TaskType
+from models.response import ServiceResponse
+from base.exception import CustomException
+from ai.summary import LangChainSummaryService
 
 router = APIRouter()
 

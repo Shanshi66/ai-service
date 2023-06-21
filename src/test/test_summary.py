@@ -4,13 +4,19 @@ from fastapi.testclient import TestClient
 client = TestClient(app)
 
 
-def test_summary():
-    with open('src/test/cases/chatgpt.txt', 'r') as f:
-        doc = f.read()
+def test_summary_request_valid():
     response = client.post("/summary", json={
-        "doc": doc,
-        "source": "https://www.google.com",
+        "doc": "hello",
+        "source": "www.google.com",
         "task_type": "summary",
-        "api_token": "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",
+        "api_token": "XXXX",
     })
-    print(response)
+    assert response.status_code == 422
+
+    response = client.post("/summary", json={
+        "doc": "hello",
+        "source": "www.google.com",
+        "task_type": "summary",
+        "api_token": "XXXX",
+    })
+    assert response.status_code == 422
