@@ -18,9 +18,7 @@ services:
     component: fc
     actions: 
       pre-deploy: 
-        - run: rm -rf deploy
-          path: .
-        - run: mkdir deploy
+        - run: sh build.sh
           path: .
         - run: cp -r src/* deploy 
           path: .
@@ -38,7 +36,7 @@ services:
           - acs:fc:cn-shanghai:official:layers/Python310/versions/2
         environmentVariables:
           PATH: /opt/python3.10/bin:$PATH
-          PYTHONUSERBASE: /code/python
+          PYTHONPATH: /code/python
         customRuntimeConfig:
           command:
             - python
