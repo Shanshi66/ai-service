@@ -18,7 +18,7 @@ services:
     component: fc
     actions: 
       pre-deploy: 
-        - run: sh build.sh
+        - run: rm -rf deploy/*
           path: .
         - run: cp -r src/* deploy 
           path: .
@@ -34,9 +34,11 @@ services:
         timeout: 60
         layers:
           - acs:fc:cn-shanghai:official:layers/Python310/versions/2
+          - acs:fc:cn-shanghai:1847940926016662:layers/python_llm/versions/4
         environmentVariables:
           PATH: /opt/python3.10/bin:$PATH
-          PYTHONPATH: /code/python
+          PYTHONPATH: /opt/python
+          # PYTHONPATH: /code/python
         customRuntimeConfig:
           command:
             - python
