@@ -1,12 +1,12 @@
 edition: 1.0.0
-name: readbot-ai
+name: llm-client
 access: "default"
 
 vars:
   region: "cn-shanghai"
   service:
-    name: "readbot-ai"
-    description: 'ai service of readbot'
+    name: "llm-client"
+    description: 'llm client support for a variety of task'
   vpcConfig:
       vpcId: vpc-uf69o8x2c9dpe9ni9zhd6
       securityGroupId: sg-uf6dklm6ropymextgbrp
@@ -14,7 +14,7 @@ vars:
         - vsw-uf6mjuikdtht9k3xq7rop
 
 services:
-  readbot-ai:
+  llm-client:
     component: fc
     actions: 
       pre-deploy: 
@@ -22,23 +22,24 @@ services:
           path: .
         - run: cp -r src/* deploy 
           path: .
-    props: # 组件的属性值
-      region: ${vars.region} # 关于变量的使用方法，可以参考：https://www.serverless-devs.com/serverless-devs/yaml#变量赋值
+    props: 
+      region: ${vars.region}
       service: ${vars.service}
       function:
-        name: "readbot-ai"
-        description: 'ai service of readbot'
+        name: "llm-client"
+        description: 'llm client support for a variety of task'
         codeUri: './deploy'
         runtime: custom
         caPort: 8000
         timeout: 60
         layers:
-          - acs:fc:cn-shanghai:official:layers/Python310/versions/2
-          - acs:fc:cn-shanghai:1847940926016662:layers/python_llm/versions/4
+          - acs:fc:cn-shanghai:official:layers/Python310/versions/2 # python3.10
+          - acs:fc:cn-shanghai:1847940926016662:layers/python_llm/versions/4 # package like fastapi uvicorn
         environmentVariables:
-          PATH: /opt/python3.10/bin:$PATH
-          PYTHONPATH: /opt/python
-          # PYTHONPATH: /code/python
+          PATH: /opt/python3.10/bin:$PATH # python3.10
+          PYTHONPATH: /opt/python # layer path
+          LLM_HOST: https://example.com # proxy server for openai
+          LLM_TOKENS: token1,token2 # to avoid rate limit
         customRuntimeConfig:
           command:
             - python

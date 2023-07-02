@@ -3,3 +3,4 @@ __pycache__
 deploy
 .s
 .DS_Store
+s.prod.yaml
