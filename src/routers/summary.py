@@ -1,21 +1,24 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from models.request import ServiceRequest, TaskType
 from models.response import ServiceResponse
-from base.exception import CustomException
-from ai.summary import LangChainSummaryService
+from base import CustomException
+from models import Config
+from ai import LLMFactory
 
 router = APIRouter()
 
 
 @router.post("/summary", response_model=ServiceResponse)
-async def summary(request: ServiceRequest):
+async def summary(request: ServiceRequest, config: Config = Depends()):
     if request.task_type != TaskType.summary:
         raise CustomException(
             status_code=400,
             message="Invalid task type",
         )
-    summary = LangChainSummaryService.summary(
-        request.doc, request.api_token, request.proxy_server)
+
+    summary = LLMFactory.create(config).summary(
+        request.content,
+    )
 
     return ServiceResponse(
         message="Success",

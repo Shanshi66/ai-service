@@ -8,11 +8,7 @@
             "name": "Python: FastAPI",
             "type": "python",
             "request": "launch",
-            "module": "uvicorn",
-            "args": [
-                "src.main:app",
-                "--reload"
-            ],
+            "program": "${workspaceFolder}/src/main.py",
             "jinja": true,
             "justMyCode": true,
         }
