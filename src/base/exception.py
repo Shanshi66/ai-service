@@ -1,23 +1,30 @@
-from fastapi import Request
+from fastapi import Request, status
 from fastapi.responses import JSONResponse
 from typing import Any
+from enum import Enum
+
+
+# error type include status code and api code
+class ErrorType(tuple[int, int], Enum):
+    # client error
+    WRONG_TASK_TYPE = (status.HTTP_400_BAD_REQUEST, 1001)
+
+    # server error
+    NOT_SUPPORT = (status.HTTP_500_INTERNAL_SERVER_ERROR, 2001)
+    LLM_NETWORK_ERROR = (status.HTTP_500_INTERNAL_SERVER_ERROR, 2002)
 
 
 class CustomException(Exception):
-    def __init__(self, status_code: int, message: str, api_code: int | None = None, data: Any | None = None):
-        self.status_code = status_code
+    def __init__(self, message: str, error_type: ErrorType):
         self.message = message
-        self.api_code = api_code
-        self.data = data
+        self.error_type = error_type
 
 
-# @app.exception_handler(CustomException)
 async def custom_exception_handler(request: Request, exc: CustomException):
     return JSONResponse(
-        status_code=exc.status_code,
+        status_code=exc.error_type[0],
         content={
             "message": exc.message,
-            "api_code": exc.api_code,
-            "data": exc.data
+            "api_code": exc.error_type[1]
         }
     )

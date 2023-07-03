@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Depends
-from models.request import ServiceRequest, TaskType
-from models.response import ServiceResponse
-from base import CustomException
+from models import ServiceResponse, ServiceRequest, LLMResponse, TaskType
+from base import CustomException, ErrorType
 from models import Config
 from ai import LLMFactory
 
@@ -12,15 +11,18 @@ router = APIRouter()
 async def summary(request: ServiceRequest, config: Config = Depends()):
     if request.task_type != TaskType.summary:
         raise CustomException(
-            status_code=400,
-            message="Invalid task type",
+            message=f"task type shoud be {TaskType.summary}",
+            error_type=ErrorType.WRONG_TASK_TYPE
         )
 
-    summary = LLMFactory.create(config).summary(
-        request.content,
+    llm_result = LLMFactory.create(config, request.llm_config).summary(
+        request.llm_input
     )
 
     return ServiceResponse(
         message="Success",
-        data=summary
+        data=LLMResponse(
+            llm_type=config.get_llm_type(),
+            result=[llm_result]
+        )
     )

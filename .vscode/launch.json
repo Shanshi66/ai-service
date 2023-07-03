@@ -11,6 +11,8 @@
             "program": "${workspaceFolder}/src/main.py",
             "jinja": true,
             "justMyCode": true,
+            //"console": "integratedTerminal",
+            "envFile": "${workspaceFolder}/.env"
         }
     ]
 }

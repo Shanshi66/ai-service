@@ -15,11 +15,27 @@ class LLMType(str, Enum):
         return value in cls._member_names_
 
 
+class RunEnv(str, Enum):
+    dev = "dev"
+    prod = "prod"
+
+
+class ModelType(str, Enum):
+    openai_gpt35 = "gpt-3.5-turbo"
+    openai_gpt35_16 = "gpt-3.5-turbo-16k"
+    openai_gpt4 = "gpt-4-0613"
+
+    @classmethod
+    def openai_default(cls):
+        return cls.openai_gpt35_16
+
+
 class Config:
     # read env variables
     llm_host = os.environ.get('LLM_HOST', 'https://api.openai.com')
     llm_tokens = os.environ.get('LLM_TOKENS', '').split(',')
     llm_type = os.environ.get('LLM_TYPE', 'openai')
+    env = os.environ.get('ENV', 'dev')
 
     def __init__(self):
         pass
@@ -48,10 +64,18 @@ class Config:
         elif len(self.llm_tokens) == 0:
             return None
         else:
-            self.llm_tokens[0]
+            return self.llm_tokens[0]
 
     def get_base_url(self) -> HttpUrl:
         return parse_obj_as(HttpUrl, self.llm_host)
 
     def get_llm_type(self) -> LLMType:
         return LLMType(self.llm_type)
+
+    @classmethod
+    def is_dev(cls) -> bool:
+        return cls.env == RunEnv.dev
+
+    @classmethod
+    def is_prod(cls) -> bool:
+        return cls.env == RunEnv.prod
