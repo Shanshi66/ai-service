@@ -15,7 +15,7 @@ from langchain.prompts.chat import (
     HumanMessagePromptTemplate,
 )
 from base import AIService, CustomException, ErrorType
-from models import Config, LLMResult, LLMConfig, LLMInput, ModelType, ChatSummaryInput
+from models import Config, LLMResult, LLMConfig, LLMInput, ModelType, ChatSummaryInput, Usage
 
 
 class OpenAIService(BaseLLM, AIService):
@@ -86,11 +86,16 @@ class OpenAIService(BaseLLM, AIService):
                 logging.error('summary naive error: {}'.format(e))
                 raise CustomException(
                     "Openai Network Error", ErrorType.LLM_NETWORK_ERROR)
-            total_tokens = cb.total_tokens
+            usage = Usage(
+                total_tokens=cb.total_tokens,
+                total_cost=cb.total_cost,
+                prompt_tokens=cb.prompt_tokens,
+                completion_tokens=cb.completion_tokens,
+            )
         return LLMResult(
             content_key=llm_input.content.content_key,
             result=result,
-            token_usage=total_tokens,
+            usage=usage,
             model=llm.model_name
         )
 
