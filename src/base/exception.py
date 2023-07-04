@@ -24,9 +24,8 @@ class CustomException(Exception):
 async def custom_exception_handler(request: Request, exc: CustomException):
     return JSONResponse(
         status_code=exc.error_type[0],
-        content=ServiceResponse(
-            message=exc.message,
-            api_code=exc.error_type[1],
-            data=None
-        )
+        content={
+            "message": exc.message,
+            "api_code": exc.error_type[1],
+        }
     )
