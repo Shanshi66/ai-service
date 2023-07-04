@@ -2,6 +2,7 @@ from fastapi import Request, status
 from fastapi.responses import JSONResponse
 from typing import Any
 from enum import Enum
+from models import ServiceResponse
 
 
 # error type include status code and api code
@@ -23,8 +24,9 @@ class CustomException(Exception):
 async def custom_exception_handler(request: Request, exc: CustomException):
     return JSONResponse(
         status_code=exc.error_type[0],
-        content={
-            "message": exc.message,
-            "api_code": exc.error_type[1]
-        }
+        content=ServiceResponse(
+            message=exc.message,
+            api_code=exc.error_type[1],
+            data=None
+        )
     )

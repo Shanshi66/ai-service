@@ -15,14 +15,10 @@ class LLMResult(BaseModel):
     result: str
     usage: Usage
     model: str
-
-
-class LLMResponse(BaseModel):
     llm_type: LLMType
-    result: List[LLMResult]
 
 
 class ServiceResponse(BaseModel):
     api_code: int | None = None
     message: str
-    data: LLMResponse | None
+    data: LLMResult | None = None

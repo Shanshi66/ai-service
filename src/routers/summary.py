@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends
-from models import ServiceResponse, ChatSummaryRequest, LLMResponse, TaskType
+from models import ServiceResponse, ChatSummaryRequest,  TaskType
 from base import CustomException, ErrorType
 from models import Config
 from ai import LLMFactory
@@ -15,8 +15,5 @@ async def summary(request: ChatSummaryRequest, config: Config = Depends()):
 
     return ServiceResponse(
         message="Success",
-        data=LLMResponse(
-            llm_type=config.get_llm_type(),
-            result=[llm_result]
-        )
+        data=llm_result
     )

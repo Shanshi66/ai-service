@@ -15,7 +15,7 @@ from langchain.prompts.chat import (
     HumanMessagePromptTemplate,
 )
 from base import AIService, CustomException, ErrorType
-from models import Config, LLMResult, LLMConfig, LLMInput, ModelType, ChatSummaryInput, Usage
+from models import Config, LLMResult, LLMConfig, LLMInput, ModelType, ChatSummaryInput, Usage, LLMType
 
 
 class OpenAIService(BaseLLM, AIService):
@@ -96,7 +96,8 @@ class OpenAIService(BaseLLM, AIService):
             content_key=llm_input.content.content_key,
             result=result,
             usage=usage,
-            model=llm.model_name
+            model=llm.model_name,
+            llm_type=LLMType.openai
         )
 
     def summary(self, llm_input: LLMInput, llm_config: LLMConfig) -> LLMResult:
