@@ -18,6 +18,7 @@ class LLMResult(BaseModel):
 
 
 class ServiceResponse(BaseModel):
-    api_code: int | None = None
+    statu_code: int
+    error_code: int | None = None
     message: str
     data: LLMResult | None = None

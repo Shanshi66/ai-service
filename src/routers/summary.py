@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, status
 from models import ServiceResponse, ChatSummaryRequest,  TaskType
 from base import CustomException, ErrorType
 from models import Config
@@ -14,6 +14,7 @@ async def summary(request: ChatSummaryRequest, config: Config = Depends()):
     )
 
     return ServiceResponse(
+        statu_code=status.HTTP_200_OK,
         message="Success",
         data=llm_result
     )

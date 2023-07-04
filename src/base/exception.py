@@ -26,6 +26,7 @@ async def custom_exception_handler(request: Request, exc: CustomException):
         status_code=exc.error_type[0],
         content={
             "message": exc.message,
-            "api_code": exc.error_type[1],
+            "error_code": exc.error_type[1],
+            "statu_code": exc.error_type[0],
         }
     )
