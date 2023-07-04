@@ -7,7 +7,7 @@ from ai import LLMFactory
 router = APIRouter()
 
 
-@router.post("/chat_summary", response_model=ServiceResponse)
+@router.post("/summary/chat", response_model=ServiceResponse)
 async def summary(request: ChatSummaryRequest, config: Config = Depends()):
     llm_result = LLMFactory.create(config).summary(
         request.llm_input, request.llm_config

@@ -34,7 +34,7 @@ class ModelType(str, Enum):
 class Config:
     # read env variables
     llm_host = os.environ.get('LLM_HOST', 'https://api.openai.com')
-    llm_tokens = os.environ.get('LLM_TOKENS', '').split(',')
+    llm_token = os.environ.get('LLM_TOKENS', '')
     llm_type = os.environ.get('LLM_TYPE', 'openai')
     env = os.environ.get('ENV', 'dev')
 
@@ -49,8 +49,8 @@ class Config:
             return False
 
         # check llm_tokens
-        if cls.llm_type == LLMType.openai and len(cls.llm_tokens) == 1 and cls.llm_tokens[0] == '':
-            logging.error("LLM_TOKENS is not set")
+        if cls.llm_type == LLMType.openai and not cls.llm_token:
+            logging.error("LLM_TOKEN is not set")
             return False
         # check llm_host is url
         if not cls.llm_host.startswith('http'):
@@ -58,14 +58,8 @@ class Config:
             return False
         return True
 
-    def get_token(self) -> str | None:
-        # if len of llm_token bigger than 1, random choice one
-        if len(self.llm_tokens) > 1:
-            return random.choice(self.llm_tokens)
-        elif len(self.llm_tokens) == 0:
-            return None
-        else:
-            return self.llm_tokens[0]
+    def get_token(self) -> str:
+        return self.llm_token
 
     def get_base_url(self) -> HttpUrl:
         return parse_obj_as(HttpUrl, self.llm_host)

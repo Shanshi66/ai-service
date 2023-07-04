@@ -3,15 +3,10 @@ name: llm-client
 access: "default"
 
 vars:
-  region: "cn-shanghai"
+  region: "us-west-1" # 硅谷
   service:
     name: "llm-client"
     description: 'llm client support for a variety of task'
-  vpcConfig:
-      vpcId: vpc-uf69o8x2c9dpe9ni9zhd6
-      securityGroupId: sg-uf6dklm6ropymextgbrp
-      vswitchIds:
-        - vsw-uf6mjuikdtht9k3xq7rop
 
 services:
   llm-client:
@@ -33,13 +28,15 @@ services:
         caPort: 8000
         timeout: 60
         layers:
-          - acs:fc:cn-shanghai:official:layers/Python310/versions/2 # python3.10
-          - acs:fc:cn-shanghai:1847940926016662:layers/python_llm/versions/4 # package like fastapi uvicorn
+          - acs:fc:us-west-1:official:layers/Python310/versions/2 # python3.10
+          - acs:fc:us-west-1:1847940926016662:layers/llm-client-python310-custom/versions/1 # python package
         environmentVariables:
           PATH: /opt/python3.10/bin:$PATH # python3.10
           PYTHONPATH: /opt/python # layer path
-          LLM_HOST: https://example.com # proxy server for openai
-          LLM_TOKENS: token1,token2 # to avoid rate limit
+          LLM_HOST: https://example.com # proxy server for openai, default: https://api.openai.com/v1
+          LLM_TOKENS: token
+          LLM_TYPE: openai
+          ENV: prod
         customRuntimeConfig:
           command:
             - python
