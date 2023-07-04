@@ -81,7 +81,7 @@ class OpenAIService(BaseLLM, AIService):
         chain = LLMChain(llm=llm, prompt=chat_prompt)
         with get_openai_callback() as cb:
             try:
-                result = chain.run([llm_input.content.content])
+                result = chain.run([llm_input.content])
             except Exception as e:
                 logging.error('summary naive error: {}'.format(e))
                 raise CustomException(
@@ -93,7 +93,6 @@ class OpenAIService(BaseLLM, AIService):
                 completion_tokens=cb.completion_tokens,
             )
         return LLMResult(
-            content_key=llm_input.content.content_key,
             result=result,
             usage=usage,
             model=llm.model_name,

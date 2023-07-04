@@ -9,11 +9,6 @@ class TaskType(str, Enum):
     summary = "summary"
 
 
-class Content(BaseModel):
-    content: str
-    content_key: str
-
-
 class LLMInput(BaseModel):
     pass
 
@@ -35,7 +30,7 @@ class ExampleMessage(BaseModel):
 class ChatSummaryInput(LLMInput):
     system_message: str
     example_messages: List[ExampleMessage] | None
-    content: Content
+    content: str
 
 
 class ChatSummaryRequest(BaseModel):

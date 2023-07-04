@@ -11,7 +11,6 @@ class Usage(BaseModel):
 
 
 class LLMResult(BaseModel):
-    content_key: str
     result: str
     usage: Usage
     model: str
