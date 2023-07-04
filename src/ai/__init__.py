@@ -6,7 +6,7 @@ from base import AIService
 
 class LLMFactory:
     @staticmethod
-    def create(config: Config, llm_config: LLMConfig) -> AIService:
+    def create(config: Config) -> AIService:
         if config.get_llm_type() == LLMType.openai:
-            return OpenAIService(config, llm_config)
+            return OpenAIService(config)
         raise NotImplementedError

@@ -1,3 +1,4 @@
+from abc import ABC
 from pydantic import BaseModel, HttpUrl
 from models import ModelType
 from enum import Enum
@@ -14,20 +15,29 @@ class Content(BaseModel):
 
 
 class LLMInput(BaseModel):
-    contents: List[Content]
-    prompt_template: str | None
-    output_template: str | None
+    pass
 
 
 class LLMConfig(BaseModel):
-    model: str | None
+    model: ModelType | None
     api_token: str | None
     base_url: HttpUrl | None
     temperature: float = 0
+    max_tokens: int = 100
+    max_retries: int = 3
 
 
-class ServiceRequest(BaseModel):
-    llm_input: LLMInput
+class ExampleMessage(BaseModel):
+    human_message: str
+    ai_message: str
+
+
+class ChatSummaryInput(LLMInput):
+    system_message: str
+    example_messages: List[ExampleMessage] | None
+    content: Content
+
+
+class ChatSummaryRequest(BaseModel):
+    llm_input: ChatSummaryInput
     llm_config: LLMConfig
-    task_type: TaskType
-    model: ModelType | None

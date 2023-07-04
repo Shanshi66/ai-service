@@ -4,6 +4,7 @@ from models import LLMType
 
 
 class LLMResult(BaseModel):
+    content_key: str
     result: str
     token_usage: int
     model: str

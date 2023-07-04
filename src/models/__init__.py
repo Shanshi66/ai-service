@@ -1,3 +1,3 @@
 from .config import Config, LLMType, ModelType
 from .response import LLMResponse, LLMResult, ServiceResponse
-from .request import ServiceRequest, TaskType, LLMConfig, LLMInput
+from .request import ChatSummaryRequest, TaskType, LLMConfig, ChatSummaryInput, LLMInput

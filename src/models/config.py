@@ -24,9 +24,10 @@ class ModelType(str, Enum):
     openai_gpt35 = "gpt-3.5-turbo"
     openai_gpt35_16 = "gpt-3.5-turbo-16k"
     openai_gpt4 = "gpt-4-0613"
+    openai_text_davinci = "text-davinci-003"
 
     @classmethod
-    def openai_default(cls):
+    def openai_chat_default(cls):
         return cls.openai_gpt35_16
 
 
