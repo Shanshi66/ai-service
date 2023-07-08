@@ -64,14 +64,14 @@ class OpenAIService(BaseLLM, AIService):
             model_name=llm_config.model if llm_config.model else ModelType.openai_chat_default(),
         )
         system_message = SystemMessagePromptTemplate.from_template(
-            llm_input.system_message)
+            llm_input.system)
         example_messages = []
-        if llm_input.example_messages:
-            for example in llm_input.example_messages:
+        if llm_input.examples:
+            for example in llm_input.examples:
                 example_messages.append(
-                    AIMessagePromptTemplate.from_template(example.ai_message))
+                    AIMessagePromptTemplate.from_template(example.ai))
                 example_messages.append(
-                    HumanMessagePromptTemplate.from_template(example.human_message))
+                    HumanMessagePromptTemplate.from_template(example.human))
         human_message_template = "{text}"
         human_message_prompt = HumanMessagePromptTemplate.from_template(
             human_message_template)

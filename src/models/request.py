@@ -1,6 +1,6 @@
 from abc import ABC
 from pydantic import BaseModel, HttpUrl
-from models import ModelType
+from models import ModelType, LLMType
 from enum import Enum
 from typing import List
 
@@ -20,16 +20,17 @@ class LLMConfig(BaseModel):
     temperature: float = 0
     max_tokens: int = 100
     max_retries: int = 3
+    llm_type: LLMType | None
 
 
-class ExampleMessage(BaseModel):
-    human_message: str
-    ai_message: str
+class Example(BaseModel):
+    human: str
+    ai: str
 
 
 class ChatSummaryInput(LLMInput):
-    system_message: str
-    example_messages: List[ExampleMessage] | None
+    system: str
+    examples: List[Example] | None
     content: str
 
 

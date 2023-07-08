@@ -1,10 +1,17 @@
 from enum import Enum
 import os
 import logging
-import random
 
 
 from pydantic import HttpUrl, parse_obj_as
+
+
+class LogLevel(str, Enum):
+    error = "error"
+    warning = "warning"
+    info = "info"
+    debug = "debug"
+    trace = "trace"
 
 
 class LLMType(str, Enum):
@@ -36,6 +43,7 @@ class Config:
     llm_host = os.environ.get('LLM_HOST', 'https://api.openai.com')
     llm_token = os.environ.get('LLM_TOKENS', '')
     llm_type = os.environ.get('LLM_TYPE', 'openai')
+    log_level = os.environ.get('LOG_LEVEL', 'error')
     env = os.environ.get('ENV', 'dev')
 
     def __init__(self):
@@ -57,6 +65,17 @@ class Config:
             logging.error("LLM_HOST is not url")
             return False
         return True
+
+    @classmethod
+    def get_log_level(cls) -> int:
+        if cls.log_level == LogLevel.debug:
+            return logging.DEBUG
+        elif cls.log_level == LogLevel.warning:
+            return logging.WARNING
+        elif cls.log_level == LogLevel.info:
+            return logging.INFO
+        else:
+            return logging.ERROR
 
     def get_token(self) -> str:
         return self.llm_token
