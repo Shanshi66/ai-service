@@ -18,7 +18,7 @@ class LLMConfig(BaseModel):
     api_token: str | None
     base_url: HttpUrl | None
     temperature: float = 0
-    max_tokens: int = 200
+    max_tokens: int = 300
     max_retries: int = 3
     llm_type: LLMType | None
 

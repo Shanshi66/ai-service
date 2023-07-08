@@ -15,6 +15,7 @@ class LLMResult(BaseModel):
     usage: Usage
     model: str
     llm_type: LLMType
+    from_cache: bool = False
 
 
 class ServiceResponse(BaseModel):
