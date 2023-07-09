@@ -44,6 +44,7 @@ class Config:
     llm_token = os.environ.get('LLM_TOKENS', '')
     llm_type = os.environ.get('LLM_TYPE', 'openai')
     log_level = os.environ.get('LOG_LEVEL', 'error')
+    basic_token = os.environ.get('BASIC_TOKEN', '')
     env = os.environ.get('ENV', 'dev')
 
     def __init__(self):
@@ -54,6 +55,10 @@ class Config:
         # check llm_type
         if not LLMType.is_in_members(cls.llm_type):
             logging.error("LLM_TYPE is not valid")
+            return False
+
+        # check basic token
+        if not cls.basic_token:
             return False
 
         # check llm_tokens
@@ -79,6 +84,10 @@ class Config:
 
     def get_token(self) -> str:
         return self.llm_token
+
+    @classmethod
+    def get_basic_token(cls) -> str:
+        return cls.basic_token
 
     def get_base_url(self) -> HttpUrl:
         return parse_obj_as(HttpUrl, self.llm_host)

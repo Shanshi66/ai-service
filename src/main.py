@@ -1,6 +1,5 @@
 from models.config import Config
-from base import CustomException, custom_exception_handler
-from fastapi.responses import JSONResponse
+from base import CustomException, custom_exception_handler, ErrorType, exception_to_response
 from fastapi import FastAPI, Request
 from routers import summary
 import uvicorn
@@ -16,6 +15,20 @@ app.add_exception_handler(CustomException, custom_exception_handler)
 @app.middleware("http")
 async def log_header(request: Request, call_next):
     logging.debug(f"request header: {request.headers}")
+    response = await call_next(request)
+    return response
+
+
+@app.middleware("http")
+async def validate_token(request: Request, call_next):
+    if "Authorization" not in request.headers:
+        return exception_to_response(CustomException("Unauthorized", ErrorType.UNAUTHORIZED))
+
+    token_type, _, token_info = request.headers["Authorization"].partition(" ")
+
+    if token_type.lower() != "basic" or token_info != Config.get_basic_token():
+        return exception_to_response(CustomException("Unauthorized", ErrorType.UNAUTHORIZED))
+
     response = await call_next(request)
     return response
 

@@ -9,6 +9,7 @@ from models import ServiceResponse
 class ErrorType(tuple[int, int], Enum):
     # client error
     WRONG_TASK_TYPE = (status.HTTP_400_BAD_REQUEST, 1001)
+    UNAUTHORIZED = (status.HTTP_401_UNAUTHORIZED, 1002)
 
     # server error
     NOT_SUPPORT = (status.HTTP_500_INTERNAL_SERVER_ERROR, 2001)
@@ -22,6 +23,17 @@ class CustomException(Exception):
 
 
 async def custom_exception_handler(request: Request, exc: CustomException):
+    return JSONResponse(
+        status_code=exc.error_type[0],
+        content={
+            "message": exc.message,
+            "error_code": exc.error_type[1],
+            "statu_code": exc.error_type[0],
+        }
+    )
+
+
+def exception_to_response(exc: CustomException):
     return JSONResponse(
         status_code=exc.error_type[0],
         content={
