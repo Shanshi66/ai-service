@@ -1,12 +1,7 @@
 import logging
-from langchain import OpenAI
 from langchain.chat_models import ChatOpenAI
-from langchain import PromptTemplate, LLMChain
-from langchain.prompts import PromptTemplate
-from langchain.chains.summarize import load_summarize_chain
+from langchain import LLMChain
 from langchain.callbacks import get_openai_callback
-from langchain.docstore.document import Document
-from .summary import DEFAULT_MAP_PROMPT_TEMPLATE_STRING
 from ai.base_llm import BaseLLM
 from langchain.prompts.chat import (
     ChatPromptTemplate,
@@ -22,46 +17,24 @@ class OpenAIService(BaseLLM, AIService):
     def __init__(self, config: Config):
         super().__init__(config)
 
-    # use text model, too expensive
-    # def summary_naive(self, llm_input, llm_config) -> LLMResult | None:
-    #     llm = OpenAI(
-    #         temperature=llm_config.temperature,
-    #         openai_api_key=llm_config.api_token if llm_config.api_token else self.api_token,
-    #         openai_api_base=llm_config.base_url if llm_config.base_url else self.base_url, client={},
-    #         max_tokens=llm_config.max_tokens,
-    #         max_retries=llm_config.max_retries,
-    #         model_name=llm_config.model if llm_config.model else ModelType.openai_chat_default(),
-    #     )
-    #     prompt = PromptTemplate(
-    #         input_variables=["text"], template=llm_input.prompt_template if llm_input.prompt_template else DEFAULT_MAP_PROMPT_TEMPLATE_STRING)
-
-    #     chain = load_summarize_chain(
-    #         llm, chain_type="stuff", prompt=prompt)
-    #     doc = Document(page_content=llm_input.contents[0].content)
-    #     with get_openai_callback() as cb:
-    #         try:
-    #             result = chain.run([doc])
-    #         except Exception as e:
-    #             logging.error('summary naive error: {}'.format(e))
-    #             raise CustomException(
-    #                 "Openai Network Error", ErrorType.LLM_NETWORK_ERROR)
-    #         total_tokens = cb.total_tokens
-
-    #     return LLMResult(
-    #         result=result,
-    #         token_usage=total_tokens,
-    #         model=llm.model_name
-    #         content_key=llm_input.contents[0].content_key
-    #     )
+    @classmethod
+    def get_summary_model(cls, char_num: int) -> ModelType:
+        if char_num <= 3500:
+            return ModelType.openai_gpt35
+        else:
+            return ModelType.openai_gpt35_16
 
     def summary_by_chat(self, llm_input: ChatSummaryInput, llm_config: LLMConfig) -> LLMResult:
+        model = self.get_summary_model(llm_input.count_chars())
+        logging.debug('char_count: {}, summary model: {}'.format(
+            llm_input.count_chars(), model))
         llm = ChatOpenAI(
             temperature=llm_config.temperature,
             openai_api_key=llm_config.api_token if llm_config.api_token else self.api_token,
             openai_api_base=llm_config.base_url if llm_config.base_url else self.base_url, client={},
             max_tokens=llm_config.max_tokens,
-            max_retries=llm_config.max_retries,
-            model_name=llm_config.model if llm_config.model else ModelType.openai_chat_default(),
+            max_retries=llm_config.max_retries if llm_config.max_retries else 3,
+            model_name=llm_config.model if llm_config.model else model,
         )
         system_message = SystemMessagePromptTemplate.from_template(
             llm_input.system)
