@@ -37,6 +37,7 @@ services:
           LLM_TOKENS: token
           LLM_TYPE: openai
           ENV: prod
+          BASIC_TOKEN: xxx # 密钥
         customRuntimeConfig:
           command:
             - python
