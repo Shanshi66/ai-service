@@ -21,12 +21,16 @@ async def log_header(request: Request, call_next):
 
 @app.middleware("http")
 async def validate_token(request: Request, call_next):
+    if Config.is_dev():
+        response = await call_next(request)
+        return response
+
     if "Authorization" not in request.headers:
         return exception_to_response(CustomException("Unauthorized", ErrorType.UNAUTHORIZED))
 
     token_type, _, token_info = request.headers["Authorization"].partition(" ")
 
-    if token_type.lower() != "basic" or token_info != Config.get_basic_token():
+    if token_type.lower() != "basic" or not Config.check_basic_token(token_info):
         return exception_to_response(CustomException("Unauthorized", ErrorType.UNAUTHORIZED))
 
     response = await call_next(request)

@@ -89,6 +89,10 @@ class Config:
     def get_basic_token(cls) -> str:
         return cls.basic_token
 
+    @classmethod
+    def check_basic_token(cls, token: str) -> bool:
+        return cls.basic_token == token
+
     def get_base_url(self) -> HttpUrl:
         return parse_obj_as(HttpUrl, self.llm_host)
 
