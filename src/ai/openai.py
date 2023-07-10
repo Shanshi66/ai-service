@@ -55,8 +55,9 @@ class OpenAIService(BaseLLM, AIService):
         with get_openai_callback() as cb:
             try:
                 result = chain.run([llm_input.content])
+                logging.info('summary result return success')
             except Exception as e:
-                logging.error('summary naive error: {}'.format(e))
+                logging.error('INTERNAL ERROR: summary exception {}'.format(e))
                 raise CustomException(
                     "Openai Network Error", ErrorType.LLM_NETWORK_ERROR)
             usage = Usage(
